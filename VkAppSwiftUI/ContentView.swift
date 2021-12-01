@@ -26,10 +26,14 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            Image("VKbackground")
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.all)
+            GeometryReader { geometry in
+                Image("VKbackground")
+                    .resizable()
+                    .scaledToFill()
+                    .edgesIgnoringSafeArea(.all)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            
             ScrollView(showsIndicators: false){
             VStack {
                 if shouldShowLogo {
@@ -37,26 +41,29 @@ struct ContentView: View {
                         .resizable()
                         .frame(width: 120.0, height: 120.0)
                         .padding(.top, 100)
-                        .padding(.bottom, 100)
-                        
+                        .padding(.bottom, 25)
                 }
+                
                 HStack {
                 Text("login")
                         .foregroundColor(.white)
                 Spacer()
-                    TextField("Login", text: self.$login)
+                    TextField("введите логин", text: self.$login)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 150)
                 }
+               
                 HStack {
                 Text("password").foregroundColor(.white)
                 Spacer()
-                    SecureField("Password", text: self.$password)
+                    SecureField("введите пароль", text: self.$password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 150)
                 }
+                
             }
             .frame(maxWidth: 250)
+            
             
             Button(action: { print("Hello") }) {
                 HStack {
@@ -70,7 +77,7 @@ struct ContentView: View {
             .disabled(login.isEmpty || password.isEmpty)
             
             }
-        
+            
             .onReceive(keyboardIsOnPublisher) { isKeyboardOn in
                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                     self.shouldShowLogo = !isKeyboardOn
@@ -78,11 +85,9 @@ struct ContentView: View {
             }
             .onTapGesture {
                 UIApplication.shared.endEditing()
-        }
+            }
         }
     }
-       
-
     }
     
 
