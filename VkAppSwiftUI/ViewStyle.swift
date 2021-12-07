@@ -20,9 +20,7 @@ struct IconModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(width: 50, height: 50)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .cornerRadius(100)
+            .clipShape(Circle())
             .shadow(color: .blue, radius: 5)
             .padding(.leading, 10)
             

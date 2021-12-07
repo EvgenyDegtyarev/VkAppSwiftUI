@@ -8,11 +8,13 @@
 import SwiftUI
 import Combine
 
-struct ContentView: View {
+struct LoginView: View {
     
-    @State private var login = ""
-    @State private var password = ""
+    @State private var login = "user"
+    @State private var password = "1234"
     @State private var shouldShowLogo: Bool = true
+    @State private var showIncorrectCredentialAlert: Bool = false
+    @Binding var showUserView: Bool
       
        private let keyboardIsOnPublisher = Publishers.Merge(
            NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
@@ -22,8 +24,6 @@ struct ContentView: View {
        )
            .removeDuplicates()
       
-
-    
     var body: some View {
         ZStack {
             GeometryReader { geometry in
@@ -51,6 +51,7 @@ struct ContentView: View {
                     TextField("введите логин", text: self.$login)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 150)
+                        .autocapitalization(.none)
                 }
                
                 HStack {
@@ -64,11 +65,10 @@ struct ContentView: View {
             }
             .frame(maxWidth: 250)
             
-            
-            Button(action: { print("Hello") }) {
+                Button(action: self.onLoginPressed) {
                 HStack {
                     Text("Log in")
-                    Image(systemName: "arrow.down")
+                    Image(systemName: "signature")
                 }
             }
             .font(.largeTitle)
@@ -86,22 +86,34 @@ struct ContentView: View {
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
+            .alert(isPresented: $showIncorrectCredentialAlert) {
+                Alert(
+            title: Text("Error"),
+            message: Text("Incorrect login or password. Try again"),
+            dismissButton: .cancel()
+            )
+            }
+        }
+    }
+    
+    private func onLoginPressed(){
+        if login == "user" && password == "1234" {
+            self.showUserView = true
+        } else {
+            self.showIncorrectCredentialAlert = true
         }
     }
     }
     
-
-        
-
 extension UIApplication {
    func endEditing() {
        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
    }
 }
 
-
-struct ContentView_Previews: PreviewProvider {
+struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        LoginView(showUserView: .constant(false))
     }
 }
+
